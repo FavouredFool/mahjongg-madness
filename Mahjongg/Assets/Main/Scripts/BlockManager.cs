@@ -8,24 +8,25 @@ public class BlockManager : MonoBehaviour
 {
     [SerializeField] Transform _blockPositionParent;
     [SerializeField] SpriteManager _spriteManager;
+    [SerializeField] GameObject _youWonObject;
 
     // At the moment the code only works with GridSubdivisions == 2!!
     public static int GridSubdivisions => 2;
     public static float BlockHeight => 0.23f;
     public static float VerticalGridSize => 0.39f / GridSubdivisions;
     public static float HorizontalGridSize => 0.30f / GridSubdivisions;
-    public BlockPosition[] BlockPositions { get; private set; }
+    public List<BlockPosition> BlockPositions { get; private set; }
 
     public void Start()
     {
-        BlockPositions = _blockPositionParent.GetComponentsInChildren<BlockPosition>();
+        BlockPositions = _blockPositionParent.GetComponentsInChildren<BlockPosition>().ToList();
 
-        Assert.IsTrue(BlockPositions.Length % 2  == 0);
+        Assert.IsTrue(BlockPositions.Count % 2  == 0);
 
         List<(Sprite, Sprite)> sprites = _spriteManager.LoadImages();
 
         sprites = sprites.OrderBy(e => UnityEngine.Random.value).ToList();
-        BlockPositions = BlockPositions.OrderBy(e => UnityEngine.Random.value).ToArray();
+        BlockPositions = BlockPositions.OrderBy(e => UnityEngine.Random.value).ToList();
 
         // Set IDs
         List<(Guid, Guid)> idsForPair = new();
@@ -38,7 +39,7 @@ public class BlockManager : MonoBehaviour
             idsForPair.Add((id0, id1));
         }
 
-        for (int i = 0, j = 0; i < BlockPositions.Length; i += 2, j++)
+        for (int i = 0, j = 0; i < BlockPositions.Count; i += 2, j++)
         {
             BlockPositions[i].OwnGuid = idsForPair[j % sprites.Count].Item1;
             BlockPositions[i+1].OwnGuid = idsForPair[j % sprites.Count].Item2;
@@ -54,6 +55,14 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    public void Update()
+    {
+        if (BlockPositions.Count == 0)
+        {
+            _youWonObject.SetActive(true);
+        }
+    }
+
     public void RemoveBlockFromLocks(BlockPosition positionToRemove)
     {
         foreach (BlockPosition blockPosition in BlockPositions)
@@ -61,5 +70,7 @@ public class BlockManager : MonoBehaviour
             blockPosition.VerticalLocks.Remove(positionToRemove);
             blockPosition.HorizontalLocks.Remove(positionToRemove);
         }
+
+        BlockPositions.Remove(positionToRemove);
     }
 }

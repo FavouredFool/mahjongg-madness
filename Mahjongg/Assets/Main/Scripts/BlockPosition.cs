@@ -54,7 +54,7 @@ public class BlockPosition : MonoBehaviour
 
     void SetLockingBlocks(BlockManager blockManager)
     {
-        BlockPosition[] blockPositions = blockManager.BlockPositions;
+        List<BlockPosition> blockPositions = blockManager.BlockPositions;
 
         _verticalLocks.Clear();
         _horizontalLocks.Clear();
