@@ -1,12 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class BlockPosition : MonoBehaviour
 {
+    [Header("Child Dependencies")]
+    [SerializeField] Image image;
+
     [Header("Configuration")]
     [SerializeField][Range(1, 10)] int _height = 1;
     [SerializeField][Range(-20, 20)] int _xPos = 0;
@@ -30,6 +31,11 @@ public class BlockPosition : MonoBehaviour
     public void OnValidate()
     {
         SetPosition();
+    }
+
+    public void SetSprite(Sprite sprite)
+    {
+        image.sprite = sprite;
     }
 
     public bool IsLocked()

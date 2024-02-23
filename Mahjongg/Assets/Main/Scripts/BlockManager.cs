@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Overlays;
 using UnityEngine;
+using UnityEngine.Assertions;
+using System.Linq;
 
 public class BlockManager : MonoBehaviour
 {
-    [SerializeField] Transform BlockPositionParent;
+    [SerializeField] Transform _blockPositionParent;
+    [SerializeField] SpriteManager _spriteManager;
 
     // At the moment the code only works with GridSubdivisions == 2!!
     public static int GridSubdivisions => 2;
@@ -15,11 +19,22 @@ public class BlockManager : MonoBehaviour
 
     public void Start()
     {
-        BlockPositions = BlockPositionParent.GetComponentsInChildren<BlockPosition>();
+        BlockPositions = _blockPositionParent.GetComponentsInChildren<BlockPosition>();
 
-        foreach (BlockPosition blockPosition in BlockPositions)
+        Assert.IsTrue(BlockPositions.Length % 2  == 0);
+
+        List<(Sprite, Sprite)> sprites = _spriteManager.LoadImages();
+
+        sprites = sprites.OrderBy(e => Random.value).ToList();
+        BlockPositions = BlockPositions.OrderBy(e => Random.value).ToArray();
+
+        for (int i = 0, j = 0; i < BlockPositions.Length; i += 2, j++)
         {
-            blockPosition.SetLocking(this);
+            BlockPositions[i].SetSprite(sprites[j % sprites.Count].Item1);
+            BlockPositions[i+1].SetSprite(sprites[j % sprites.Count].Item2);
+
+            BlockPositions[i].SetLocking(this);
+            BlockPositions[i+1].SetLocking(this);
         }
     }
 
