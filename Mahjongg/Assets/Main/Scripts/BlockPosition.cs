@@ -51,7 +51,7 @@ public class BlockPosition : MonoBehaviour
                 continue;
             }
 
-            Assert.IsTrue(!PositionIntersectsMe(referencePosition), "Intersects");
+            Assert.IsTrue(!PositionIntersectsMe(referencePosition), $"Intersects {this}");
 
             // Vertical Locking
             if (PositionOnMyXZ(referencePosition) && referencePosition.Height > _height)

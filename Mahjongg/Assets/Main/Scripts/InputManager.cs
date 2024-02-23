@@ -28,6 +28,8 @@ public class InputManager : MonoBehaviour
                 return;
             }
 
+            Debug.Log(blockPosition);
+
             if (blockPosition.IsLocked())
             {
                 return;
