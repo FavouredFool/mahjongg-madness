@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -7,6 +8,7 @@ public class BlockPosition : MonoBehaviour
 {
     [Header("Child Dependencies")]
     [SerializeField] Image image;
+    [SerializeField] MeshRenderer meshRenderer;
 
     [Header("Configuration")]
     [SerializeField][Range(1, 10)] int _height = 1;
@@ -21,6 +23,8 @@ public class BlockPosition : MonoBehaviour
     public int ZPos { get => _zPos; }
     public List<BlockPosition> VerticalLocks => _verticalLocks;
     public List<BlockPosition> HorizontalLocks => _horizontalLocks;
+    public Guid OwnGuid { get; set; }
+    public Guid GoalGuid { get; set; }
 
     public void SetLocking(BlockManager blockManager)
     {
@@ -41,6 +45,11 @@ public class BlockPosition : MonoBehaviour
     public bool IsLocked()
     {
         return _verticalLocks.Count > 0 || _horizontalLocks.Count > 1;
+    }
+
+    public bool IsMatching(BlockPosition blockPositionToMatch)
+    {
+        return GoalGuid == blockPositionToMatch.OwnGuid;
     }
 
     void SetLockingBlocks(BlockManager blockManager)
@@ -137,5 +146,15 @@ public class BlockPosition : MonoBehaviour
     public override string ToString()
     {
         return $"[BlockPosition (Locked: {IsLocked()}, X: {_xPos}, Height: {_height}, Z: {_zPos})]";
+    }
+
+    public void SetTouchedColor(Color color)
+    {
+        meshRenderer.material.color = color;
+    }
+
+    public void ResetColor()
+    {
+        meshRenderer.material.color = Color.white;
     }
 }
